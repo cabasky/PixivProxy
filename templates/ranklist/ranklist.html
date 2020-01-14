@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block css %}
+<style>
+    #back {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        bottom: 0;
+        margin: auto 0;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .rankc {
+        margin: 15% 15%;
+    }
+
+    .text {
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div id="back">
+        <div style="width: 100%;height: 1px;margin-bottom: 70px;"></div>
+        <div class="text" style="margin-top: 70px;margin-bottom: 70px;">
+            <h1 style="color:white">Ranking at {{rankdate}} type:{{mode}}</h1>
+        </div>
+        <form method="POST" class="form-inline" action=''>
+            {% csrf_token %}
+            <div class="container">
+                <div class="row" style="margin-bottom: 50px;">
+                    <div class="offset-7">
+                        <input class="form-control mr-sm-2" style="background-color:rgba(0, 0, 0, 0);color: white;"
+                            type="search" placeholder="Search" aria-label="Search" name="date" >
+                        <select class="form-control mr-sm-2"
+                            style="color :white; background-color: rgba(0, 0, 0, 0);" name='type'>
+                            <option value='0'>daily</option>
+                            <option value='1'>weekly</option>
+                            <option value='2'>monthly</option value='0'>
+                            <option value='3'>rookie</option value='0'>
+                            <option value='4'>male</option value='0'>
+                            <option value='5'>female</option value='0'>
+                        </select>
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Go!</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        {% for it in rkl %}
+        {% if forloop.counter0|divisibleby:3 %}
+        <div class="row">
+            <div class="col-4">
+                <div class="holder">
+                    <div class="card bg-dark text-light rankc">
+                        <a href="{% url 'artworkpage' it.id %}" target="_blank"><img class="card-img-top"
+                                src="{% url 'artwork' it.id 3 %}"></a>
+                        <div class="card-body text-center">
+                            <p class="card-text" style="color:whitesmoke;">#{{forloop.counter}}</p>
+                            <div style="margin :auto auto;">
+                                <div style="margin :auto auto;">
+                                <a href="{% url 'artworkpage' it.id %}"><b class="card-text"
+                                        style="color:whitesmoke;">{{it.name}}&#10</b></a></div>
+                                <img src="{% url 'headimg' it.artistid 0 %}" class="rounded-circle"
+                                    style="width: 30px;height: 30px;">
+                                <span class="card-text" style="color:white">{{it.artist}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% elif forloop.counter0|add:-1|divisibleby:3 %}
+            <div class="col-4">
+                <div class="holder">
+                    <div class="card bg-dark text-light rankc">
+                        <a href="{% url 'artworkpage' it.id %}" target="_blank"><img class="card-img-top"
+                                src="{% url 'artwork' it.id 3 %}"></a>
+                        <div class="card-body text-center">
+                            <p class="card-text" style="color:whitesmoke;">#{{forloop.counter}}</p>
+                            <div style="margin :auto auto;">
+                                <div style="margin :auto auto;">
+                                <a href="{% url 'artworkpage' it.id %}"><b class="card-text"
+                                        style="color:whitesmoke;">{{it.name}}&#10</b></a></div>
+                                <img src="{% url 'headimg' it.artistid 0 %}" class="rounded-circle"
+                                    style="width: 30px;height: 30px;">
+                                <span class="card-text" style="color:white">{{it.artist}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% elif forloop.counter0|add:-2|divisibleby:3 or forloop.last%}
+            <div class="col-4">
+                <div class="holder">
+                    <div class="card bg-dark text-light rankc">
+                        <a href="{% url 'artworkpage' it.id %}" target="_blank"><img class="card-img-top"
+                                src="{% url 'artwork' it.id 3 %}"></a>
+                        <div class="card-body text-center">
+                            <p class="card-text" style="color:whitesmoke;">#{{forloop.counter}}</p>
+                            <div style="margin :auto auto;">
+                                <div style="margin :auto auto;">
+                                <a href="{% url 'artworkpage' it.id %}"><b class="card-text"
+                                        style="color:whitesmoke;">{{it.name}}&#10</b></a></div>
+                                <img src="{% url 'headimg' it.artistid 0 %}" class="rounded-circle"
+                                    style="width: 30px;height: 30px;">
+                                <span class="card-text" style="color:white">{{it.artist}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        <div style="width: 100%;height: 1px;margin: 0 0;"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script%}
+{% endblock %}

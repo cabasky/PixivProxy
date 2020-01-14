@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+{% block css %}
+<style>
+    #searchbox {
+        background-color: rgba(0, 0, 0, 0.4);
+        margin: 15% 10%;
+        padding: 30px;
+    }
+    div.container{
+        position:relative;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="rounded" id="searchbox">
+        <div class="row">
+            <div class="mx-auto">
+                <p style="font-size: 60px;color: whitesmoke;">PixivProxy</p>
+            </div>
+        </div>
+        <form method="POST" id="mainform">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="col-8">
+                    <input class="form-control mr-sm-2" style="background-color:rgba(0, 0, 0, 0);color: white;"
+                        type="search" placeholder="Search" aria-label="Search" name="id">
+                </div>
+                <div class="col-2">
+                    <select class="form-control" id="idoption"
+                        style="color :white; background-color: rgba(0, 0, 0, 0);">
+                        <option>Picture ID</option>
+                        <option>Artist ID</option>
+                    </select>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="button" style="width:100%;"
+                        onclick=Submitid("idoption","mainform")>Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+{% endblock %}

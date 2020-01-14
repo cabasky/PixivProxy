@@ -1,0 +1,98 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>{% block title %}basepage{% endblock %}</title>
+	<link href="{% static 'bootstrap-4.4.1-dist/css/bootstrap.min.css'%}" rel="stylesheet">
+	<style>
+		HTML {
+			height: 100%;
+		}
+
+		body {
+			min-height: 100%;
+			height :100%;
+			background-image: url("{% static 'res_img/bg1.jpg' %}");
+			background-position: center center;
+			background-repeat: no-repeat;
+			background-size: cover;
+			background-attachment: fixed;
+		}
+
+		#bgcover {
+			position: fixed;
+			width: 100%;
+			top:0;
+			bottom: 0;
+			overflow-y:scroll;
+			background-color: rgba(0, 0, 0, 0.3);
+		}
+	</style>
+	{% block css %}{% endblock %}
+</head>
+
+<body>
+	<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" >
+		<a class="navbar-brand" href="/search/">PixivProxy</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item">
+					<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/ranklist/">Ranklist</a>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+						data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Dropdown
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="#">Action</a>
+						<a class="dropdown-item" href="#">Another action</a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item" href="#">Something else here</a>
+					</div>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+				</li>
+			</ul>
+			<form class="form-inline my-2 my-lg-0">
+				<input class="form-control mr-sm-2" style="background-color:rgba(0, 0, 0, 0);color: white;"
+					type="search" placeholder="Search" aria-label="Search">
+				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Undeveloped please wait...</button>
+			</form>
+		</div>
+	</nav>
+	<div id="bgcover">
+		{% block content %}{% endblock %}
+	</div>
+</body>
+<script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+	integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+	crossorigin="anonymous"></script>
+<script src="{% static 'bootstrap-4.4.1-dist/js/bootstrap.min.js' %}"></script>
+
+<script type="text/javascript">
+	function Submitid(optstr, frmstr) {
+		var idopt = document.getElementById(optstr);
+		var frm = document.getElementById(frmstr);
+		if (idopt.selectedIndex == 0) frm.action = "/artwork/";
+		else if (idopt.selectedIndex == 1) frm.action = "/artist/";
+		frm.submit();
+	}
+</script>
+{% block script %} {% endblock %}
+</html>

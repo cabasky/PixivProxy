@@ -14,7 +14,6 @@ def ranklist(request):
         deltadays = 1
     datedefault = (timezone.now()-datetime.timedelta(days=deltadays)
                    ).strftime("%Y%m%d")
-    print(datedefault)
     if(request.POST):
         mode = int(request.POST['type'])
         rankdate = request.POST['date']
@@ -29,7 +28,6 @@ def ranklist(request):
         rkl = loadranklist(requestdate=rankdate, mode=mode)
         rklstobj = RankList(mode=mode, rankdate=rankdate)
         rklstobj.save()
-        print(len(rkl))
         for r in rkl:
             w = RankWork.objects.filter(artworkid=r.id)
             if(not w):

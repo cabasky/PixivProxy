@@ -27,13 +27,13 @@ def Artworkinfo(request, workid):
     if(not idList):
         ArtistId, Artist, Name, Url, PageCount, ImgFormat = GetInfoByIdUnLogin(
             id=workid)
-        NewArtwork = Artwork(picid=int(workid), artist=Artist, artistId=int(
+        '''NewArtwork = Artwork(picid=int(workid), artist=Artist, artistId=int(
             ArtistId), url=Url, name=Name, pageCount=PageCount, imgformat=ImgFormat)
-        NewArtwork.save()
+        NewArtwork.save()'''
     else:
         NewArtwork = idList[0]
-        ArtistId = str(NewArtwork.artistId)
-        Artist = NewArtwork.artist
+        ArtistId = str(NewArtwork.picartist.artist)
+        Artist = NewArtwork.picartist.name
         Name = NewArtwork.name
         Url = NewArtwork.url
         PageCount = str(NewArtwork.pageCount)

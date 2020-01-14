@@ -85,13 +85,20 @@ class PixivClient:
         self.close()
 
 
-def GetInfoByIdUnLogin(id):
+def GetInfoByIdUnLogin(id, InsArtist=None):
     idList = Artwork.objects.filter(picid=int(id))
     if(not idList):
         mainjson = requests.get('https://www.pixiv.net/ajax/illust/'+id).text
         mainjson = json.loads(mainjson)['body']
-        InsArtistId = int(mainjson['userId'])
-        InsArtist = mainjson['userName']
+        if InsArtist == None:
+            InsArtistId = int(mainjson['userId'])
+            InsArtist = Artist.objects.filter(artistid=InsArtistId)
+            if not InsArtist:
+                InsArtist = Artist(
+                    name=mainjson['userName'], artistid=InsArtistId)
+                InsArtist.save()
+            else:
+                InsArtist = InsArtist[0]
         InsName = mainjson['illustTitle']
         InsPageCount = int(mainjson['pageCount'])
         InsUrl = mainjson['urls']['original']
@@ -101,25 +108,26 @@ def GetInfoByIdUnLogin(id):
             Insformat = 1
         modestr = re.compile('img/(.*?/)'+id)
         InsUrl = modestr.findall(InsUrl)[0]
-        NewArtwork=Artwork(picid=int(id),artistId=int(InsArtistId),artist=InsArtist,name=InsName,url=InsUrl,pageCount=InsPageCount,imgformat=Insformat)
+        NewArtwork = Artwork(picid=int(id), picartist=InsArtist, name=InsName,
+                             url=InsUrl, pageCount=InsPageCount, imgformat=Insformat)
         NewArtwork.save()
     else:
         NewArtwork = idList[0]
-        InsArtistId = str(NewArtwork.artistId)
-        InsArtist = NewArtwork.artist
+        InsArtist = NewArtwork.picartist
         InsName = NewArtwork.name
         InsUrl = NewArtwork.url
         InsPageCount = NewArtwork.pageCount
         Insformat = NewArtwork.imgformat
 
-    return (InsArtistId, InsArtist, InsName, InsUrl, InsPageCount, Insformat)
+    return (str(InsArtist.artistid), InsArtist.name, InsName, InsUrl, InsPageCount, Insformat)
 
 
 def Getpicurl(rawurl, id, mode, page, imgformat):
-    if mode==5 :
-        ret=urlset[mode][0]+rawurl+id+'_p'+str(page)+urlset[mode][1]+imgformat
+    if mode == 5:
+        ret = urlset[mode][0]+rawurl+id+'_p' + \
+            str(page)+urlset[mode][1]+imgformat
     else:
-        ret=urlset[mode][0]+rawurl+id+'_p'+str(page)+urlset[mode][1]
+        ret = urlset[mode][0]+rawurl+id+'_p'+str(page)+urlset[mode][1]
     return ret
 
 
@@ -134,14 +142,78 @@ def GetpicturebyUrl(url):
     return img, allowtype
 
 
-def Getartistinfo(artistid):
-    mainjson = requests.get(
-        'https://www.pixiv.net/ajax/user/'+artistid, cookies=Cookies(rc).cookiesdict).text
-    mainjson = json.loads(mainjson)['body']
-    return mainjson['name']
+def Getartistinfo(artistid, update=0, pg=0):
+    idList = Artist.objects.filter(artistid=artistid)
+    if(not idList):
+        mainjson = requests.get(
+            'https://www.pixiv.net/ajax/user/'+artistid, cookies=Cookies(rc).cookiesdict).text
+        mainjson = json.loads(mainjson)['body']
+        name = mainjson['name']
+        NewArtist = Artist(artistid=int(artistid), name=name)
+        NewArtist.save()
+    else:
+        NewArtist = idList[0]
+        name = NewArtist.name
+    if not update:
+        return name
+    else:
+        mainjson = json.loads(requests.get(
+            'https://www.pixiv.net/ajax/user/'+artistid, cookies=Cookies(rc).cookiesdict).text)['body']
+        if mainjson['background'] == None:
+            isbkg = 0
+        else:
+            isbkg = 1
+        if mainjson['premium'] == True:
+            isprem = 1
+        else:
+            isprem = 0
+        mainurl = 'https://www.pixiv.net/ajax/user/'+artistid+'/profile/all'
+        mainjson = list(json.loads(requests.get(
+            mainurl).content)['body']['illusts'])
+        step=15
+        s = pg*step
+        l = len(mainjson)
+        namelist = []
+        for i in range(step):
+            if i+s >= l:
+                break
+            namelist.append((mainjson[i+s],GetInfoByIdUnLogin(
+                mainjson[i+s], InsArtist=NewArtist)[2]))
+        if s+step >= l:
+            t = l
+        else:
+            t = s+step
+        return name, namelist, l, isbkg, isprem
 
 
 def Getartistimg(artistid, mode):
     mainjson = requests.get(
         'https://www.pixiv.net/ajax/user/'+artistid, cookies=Cookies(rc).cookiesdict).text
     return json.loads(mainjson)['body'][artistimgset[mode]]
+
+
+def Getbackground(artistid):
+    mainjson = requests.get(
+        'https://www.pixiv.net/ajax/user/'+artistid, cookies=Cookies(rc).cookiesdict).text
+    return json.loads(mainjson)['body']['background']
+
+def pagelist(tot,active):
+    l=[active]
+    lflag=0
+    rflag=0
+    if active>1:
+        l=[active-1]+l
+        lflag=1
+    if active<tot:
+        l+=[active+1]
+        rflag=1
+    if active>2 and active <4:
+        l=[active-2]+l
+    if active<tot-1:
+        l+=[active+2]
+    
+    if active>3 and active < 4:
+        l=[active-2]+l
+    if active<tot-2:
+        l+=[active+3]
+    return (active,lflag,rflag,l)

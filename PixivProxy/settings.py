@@ -79,12 +79,18 @@ WSGI_APPLICATION = 'PixivProxy.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
+import json
+import os
+accessFile=open(os.path.expanduser('~')+'/dbac','r')
+DATABASES=eval(accessFile.read())
+accessFile.close()
+
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
-}
+}"""
 
 """DATABASES = {
     'default': {

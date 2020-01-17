@@ -85,23 +85,6 @@ accessFile=open(os.path.expanduser('~')+'/dbac','r')
 DATABASES=eval(accessFile.read())
 accessFile.close()
 
-"""DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}"""
-
-"""DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ebdb',
-        'USER': 'cabasky',
-        'PASSWORD': 'xie65806607',
-        'HOST': 'database-1.cb5tdirjrolt.ap-northeast-1.rds.amazonaws.com',
-        'PORT': '3306',
-    }
-}"""
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -141,5 +124,7 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
+     "/home/ubuntu/webfile/PixivProxy/static",
 ]
+
+STATIC_ROOT = "/home/ubuntu/webfile/static/"

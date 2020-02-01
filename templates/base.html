@@ -89,8 +89,12 @@
 	function Submitid(optstr, frmstr) {
 		var idopt = document.getElementById(optstr);
 		var frm = document.getElementById(frmstr);
+		var keyWords=document.getElementById('keyWords');
+        var url = window.location.host+window.location.pathname;
+		var ifpost=1;
 		if (idopt.selectedIndex == 0) frm.action = "/artwork/";
 		else if (idopt.selectedIndex == 1) frm.action = "/artist/";
+		else if (idopt.selectedIndex == 2) frm.action = "illustions/";
 		frm.submit();
 	}
 </script>

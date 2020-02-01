@@ -170,14 +170,14 @@ def Getartistinfo(artistid, update=0, pg=0):
         mainurl = 'https://www.pixiv.net/ajax/user/'+artistid+'/profile/all'
         mainjson = list(json.loads(requests.get(
             mainurl).content)['body']['illusts'])
-        step=15
+        step = 15
         s = pg*step
         l = len(mainjson)
         namelist = []
         for i in range(step):
             if i+s >= l:
                 break
-            namelist.append((mainjson[i+s],GetInfoByIdUnLogin(
+            namelist.append((mainjson[i+s], GetInfoByIdUnLogin(
                 mainjson[i+s], InsArtist=NewArtist)[2]))
         if s+step >= l:
             t = l
@@ -197,23 +197,43 @@ def Getbackground(artistid):
         'https://www.pixiv.net/ajax/user/'+artistid, cookies=Cookies(rc).cookiesdict).text
     return json.loads(mainjson)['body']['background']
 
-def pagelist(tot,active):
-    l=[active]
-    lflag=0
-    rflag=0
-    if active>1:
-        l=[active-1]+l
-        lflag=1
-    if active<tot:
-        l+=[active+1]
-        rflag=1
-    if active>2 and active <4:
-        l=[active-2]+l
-    if active<tot-1:
-        l+=[active+2]
-    
-    if active>3 and active < 4:
-        l=[active-2]+l
-    if active<tot-2:
-        l+=[active+3]
-    return (active,lflag,rflag,l)
+
+def pagelist(tot, active):
+    l = [active]
+    lflag = 0
+    rflag = 0
+    if active > 1:
+        l = [active-1]+l
+        lflag = 1
+    if active < tot:
+        l += [active+1]
+        rflag = 1
+    if active > 2 and active < 4:
+        l = [active-2]+l
+    if active < tot-1:
+        l += [active+2]
+
+    if active > 3 and active < 4:
+        l = [active-2]+l
+    if active < tot-2:
+        l += [active+3]
+    return (active, lflag, rflag, l)
+
+
+def GetSearchList(keywords, page):
+    webPage = (page//4)+1
+    mainUrl = 'https://www.pixiv.net/ajax/search/artworks/%s?word=%s&order=date_d&mode=all&p=%d&s_mode=s_tag&type=all' % (
+        keywords, keywords, webPage)
+    mainJson = json.loads(requests.get(mainUrl).content)['body']['illustManga']
+    startTag = (page % 4)*15
+    totalNum = mainJson['total']
+    mainJson = list(mainJson['data'])
+    l = len(mainJson)
+    workList = []
+    for i in range(15):
+        if i + startTag >= l:
+            break
+        if mainJson[i+startTag]['isAdContainer']:
+            continue
+        workList.append((mainJson[i+startTag]['id'],mainJson[i+startTag]['title']))
+    return workList,totalNum

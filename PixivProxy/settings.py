@@ -124,8 +124,8 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    "static",
-    #"/home/ubuntu/webfile/PixivProxy/static",
+    #"static",
+    "/home/ubuntu/webfile/PixivProxy/static",
 ]
 
 STATIC_ROOT = "/home/ubuntu/webfile/static/"

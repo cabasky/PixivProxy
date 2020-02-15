@@ -9,6 +9,9 @@ import json
 
 
 def register(request):
+    if request.session.get('logged', False):
+        return HttpResponseRedirect('/user')
+
     if 'usr' in request.POST:
         usr = request.POST['usr']
         pwd = request.POST['pwd']
@@ -28,7 +31,11 @@ def register(request):
             else:
                 return HttpResponse('The email had been used!')
     else:
-        return render(request, template_name='user/register.html')
+        ctx = {
+            'logged': False,
+            'userName': '',
+        }
+        return render(request, template_name='user/register.html', context=ctx)
 
 
 def login(request):

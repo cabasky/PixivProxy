@@ -38,7 +38,7 @@ def ArtworkId(request, workid):
     return render(
         request,
         template_name='artwork/artworkpage.html',
-        context=ctx
+        context=ctx,
     )
 
 

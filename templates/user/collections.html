@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block css %}
+<style>
+
+    #bkg {
+        width: 100%;
+        height: 35vh;
+        background-color: rgba(0, 0, 0, 0.4);
+
+        display : inline-block;
+    }
+    #back {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 0;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+    .page-item{
+        background-color: rgba(0, 0, 0, 0);
+    }
+    .pages{
+        line-height: 40px;
+        height:40px;
+        width:40px;
+        display : inline-block;
+        margin:auto 0;
+    }
+    .pagenum{
+        color: whitesmoke; 
+        font-size: 20px;
+        margin:auto auto;
+    }
+    .pagenum.disabled{
+        color: grey;
+    }
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="container">
+    <div id="bkg">
+        <div style="margin-top:12vh;margin-left:40px;">
+        <span style="color:whitesmoke;font-size:50px;">{{ userName }}&apos;s Collections</span>
+        </div>
+        <div>
+            <span class="card-text" style="margin-left:40px;color:gray;font-size: 15px;">UserId</span>
+            <span class="badge badge-pill badge-secondary"
+                style="margin-top: 15px;">{{ userId }}</span>
+        </div>
+
+    </div>
+    <div id="back">
+        <div style='width:100%;height:1px;'></div>
+        <div>
+            <span style="margin-left:100px;">&ensp;</span>
+            <span class="badge badge-pill badge-success" style="margin-top: 15px;">{{ num }}</span>
+            <span class="card-text" style="color:gray;font-size: 15px;">BookMarks</span>
+        </div>
+        <div class="container" style="margin-top: 20px;">
+            {% for i in workList %}
+            {% if forloop.counter0|divisibleby:5 %}
+            <div class="row">
+                <div class="col-2 offset-1" style="margin-bottom:20px;">
+                    <div class="holder">
+                        <a href="{% url 'artworkpage' i %}" id="a{{forloop.counter0}}" style="text-decoration:none">
+                            <img src="{% url 'artwork' i 2 %}" id="img{{forloop.counter0}}" class="rounded"
+                                style="width:100%;object-fit: cover; object-position: center; margin-bottom: 5px;"></img>
+                        </a>
+                    </div>
+                </div>
+                {% elif forloop.counter0|add:-1|divisibleby:5 %}
+
+                <div class="col-2" style="margin-bottom:20px;">
+                    <div class="holder">
+                        <a href="{% url 'artworkpage' i %}" id="a{{forloop.counter0}}" style="text-decoration:none">
+                            <img src="{% url 'artwork' i 2 %}" id="img{{forloop.counter0}}" class="rounded"
+                                style="width:100%;object-fit: cover; object-position: center;"></img>
+                        </a>
+                    </div>
+                </div>
+                {% elif forloop.counter0|add:-2|divisibleby:5 %}
+
+                <div class="col-2" style="margin-bottom:20px;">
+                    <div class="holder">
+                        <a href="{% url 'artworkpage' i %}" id="a{{forloop.counter0}}" style="text-decoration:none">
+                            <img src="{% url 'artwork' i 2 %}" id="img{{forloop.counter0}}" class="rounded"
+                                style="width:100%;object-fit: cover; object-position: center;"></img>
+                        </a>
+                    </div>
+                </div>
+
+                {% elif forloop.counter0|add:-3|divisibleby:5 %}
+
+                <div class="col-2" style="margin-bottom:20px;">
+                    <div class="holder">
+                        <a href="{% url 'artworkpage' i %}" id="a{{forloop.counter0}}" style="text-decoration:none">
+                            <img src="{% url 'artwork' i 2 %}" id="img{{forloop.counter0}}" class="rounded"
+                                style="width:100%;object-fit: cover; object-position: center;"></img>
+                        </a>
+                    </div>
+                </div>
+                {% elif forloop.counter0|add:-4|divisibleby:5 or forloop.last%}
+
+                <div class="col-2" style="margin-bottom:20px;">
+                    <div class="holder">
+                        <a href="{% url 'artworkpage' i %}" id="a{{forloop.counter0}}" style="text-decoration:none">
+                            <img src="{% url 'artwork' i 2 %}" id="img{{forloop.counter0}}" class="rounded"
+                                style="width:100%;object-fit: cover; object-position: center;"></img>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+            <div style="text-align:center" id="nabla">
+                <a href="#"><span style="color:whitesmoke;font-size:25px;" onclick="collectionAppend()">▼</span></a>
+            </div>
+            <div id="lastdiv" style="height: 1px;"></div>
+        </div>
+        <div style="margin-top:30px;width: 100%;height: 1px;"></div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    var offset;
+    $(document).ready(function(){ 
+        offset=15;
+        if({{ num }}<15) offset={{ num }};
+    }); 
+    function collectionAppend(){
+        $('#nabla').remove();
+        var spndiv=$('<div>',{class:'text-center',id:'spndiv'});
+        var spn=$('<div>',{class:"spinner-grow text-success",role:"status",id:"spn"});
+        $('#lastdiv').before(spndiv);
+        $('#spndiv').append(spn);
+        $.ajax({
+            url:'append?offset='+String(offset),
+            type:'get',
+            success:function(data){
+                var rowdiv;
+                for(var i=0;i<15;i++){
+                    picdiv=$('<div>',{class:"col-2",style:"margin-bottom:20px;",id:"lastpic"});
+                    holder=$('<div>',{class:"holder",id:"lasthld"});
+                    ref=$('<a>',{href:"/artwork/"+data.workList[i],style:"text-decoration:none",id:"lastref"});
+                    imgbox=$('<img>',{
+                        src:"/artwork/img/"+data.workList[i]+"/2",
+                        class:"rounded",
+                        style:"width:100%;object-fit: cover; object-position: center; margin-bottom: 5px;"
+                    });
+                    if(i%5==0){
+                        $("#last").removeAttr("id");
+                        rowdiv=$('<div>',{class:"row",id:"last"});
+                        $('#lastdiv').before(rowdiv);
+                        picdiv.attr("class","col-2 offset-1");
+                    }
+                    $("#last").append(picdiv);
+                    $("#lastpic").append(holder);
+                    $("#lasthld").append(ref);
+                    $("#lastref").append(imgbox);
+                    $("#lastpic").removeAttr("id");
+                    $("#lasthld").removeAttr("id");
+                    $("#lastref").removeAttr("id");
+                    offset++;
+                }
+                setTimeout($('#spndiv').remove(),7500);
+                if(!(offset>={{ num }})){
+                    nabladiv=$('<div>',{style:"text-align:center;",id:"nabla"});
+                    nablaref=$('<a>',{style:"text-decoration:none;",href:"#",id:"nablaref"});
+                    nabla=$('<span>',{style:"color:whitesmoke;font-size:25px;",onclick:"collectionAppend()"});
+                    nabla.html('▼');
+                    $('#lastdiv').before(nabladiv);
+                    $('#nabla').append(nablaref);
+                    $('#nablaref').append(nabla);
+                }
+            }
+        })
+    }
+</script>
+{% endblock script %}

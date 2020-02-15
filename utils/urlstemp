@@ -1,3 +1,8 @@
 https://www.pixiv.net/ajax/search/artworks/a?word=a&order=date_d&mode=all&p=2&s_mode=s_tag&type=all
 https://www.pixiv.net/ajax/search/artworks/fate?word=fate&order=date_d&mode=all&p=1&s_mode=s_tag&type=all
 https://www.pixiv.net/search_user.php?s_mode=s_usr&nick=a&comment=&p=1
+
+
+https://www.pixiv.net/rpc/index.php?mode=get_recommend_users_and_works_by_user_ids&user_ids=4258322%2C1113943%2C38760%2C2059725%2C14524983%2C151922%2C216403%2C333556%2C1522108%2C1039353&user_num=30&work_num=5
+
+https://www.pixiv.net/ajax/user/22318221/illusts/bookmarks?tag=&offset=0&limit=48&rest=show

@@ -63,9 +63,12 @@
                                 <div style="margin :auto auto;">
                                 <a href="{% url 'artworkpage' it.id %}"><b class="card-text"
                                         style="color:whitesmoke;">{{it.name}}&#10</b></a></div>
-                                <img src="{% url 'headimg' it.artistid 0 %}" class="rounded-circle"
-                                    style="width: 30px;height: 30px;">
-                                <span class="card-text" style="color:white">{{it.artist}}</span>
+
+                                <a href="{% url 'artistpage' it.artistid %}">
+                                    <img src="{% url 'headimg' it.artistid 0 %}" class="rounded-circle"
+                                        style="width: 30px;height: 30px;">
+                                    <span class="card-text" style="color:white">{{it.artist}}</span>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -83,9 +86,11 @@
                                 <div style="margin :auto auto;">
                                 <a href="{% url 'artworkpage' it.id %}"><b class="card-text"
                                         style="color:whitesmoke;">{{it.name}}&#10</b></a></div>
-                                <img src="{% url 'headimg' it.artistid 0 %}" class="rounded-circle"
-                                    style="width: 30px;height: 30px;">
-                                <span class="card-text" style="color:white">{{it.artist}}</span>
+                                <a href="{% url 'artistpage' it.artistid %}">
+                                    <img src="{% url 'headimg' it.artistid 0 %}" class="rounded-circle"
+                                        style="width: 30px;height: 30px;">
+                                    <span class="card-text" style="color:white">{{it.artist}}</span>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -103,9 +108,11 @@
                                 <div style="margin :auto auto;">
                                 <a href="{% url 'artworkpage' it.id %}"><b class="card-text"
                                         style="color:whitesmoke;">{{it.name}}&#10</b></a></div>
-                                <img src="{% url 'headimg' it.artistid 0 %}" class="rounded-circle"
-                                    style="width: 30px;height: 30px;">
-                                <span class="card-text" style="color:white">{{it.artist}}</span>
+                                <a href="{% url 'artistpage' it.artistid %}">
+                                    <img src="{% url 'headimg' it.artistid 0 %}" class="rounded-circle"
+                                        style="width: 30px;height: 30px;">
+                                    <span class="card-text" style="color:white">{{it.artist}}</span>
+                                </a>
                             </div>
                         </div>
                     </div>

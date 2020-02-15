@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'search.apps.SearchConfig',
     'ranklist.apps.RanklistConfig',
     'artist.apps.ArtistConfig',
+    'users.apps.UsersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -60,6 +61,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR+"/templates",
+            '/usr/local/lib/python3.7/site-packages/django/contrib/admin/templates',
         ],
         'APP_DIRS': False,
         'OPTIONS': {
@@ -72,7 +74,6 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'PixivProxy.wsgi.application'
 
 
@@ -124,8 +125,10 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    #"static",
-    "/home/ubuntu/webfile/PixivProxy/static",
+    "static",
+    #"/home/ubuntu/webfile/PixivProxy/static",
 ]
 
 STATIC_ROOT = "/home/ubuntu/webfile/static/"
+
+COOKIES_DIRS = '/Users/xie_q/development/userInfo/'

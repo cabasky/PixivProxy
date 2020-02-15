@@ -4,11 +4,13 @@ from utils.pixivc import *
 from .models import Artist
 import requests
 import json
+from users.models import User
 # Create your views here.
 
 
 def postid(request):
     return HttpResponseRedirect(request.POST['id'])
+
 
 def artistimg(request, artistid, mode):
     url = Getartistimg(artistid=artistid, mode=mode)
@@ -38,12 +40,18 @@ def artistinfo(request, artistid):
 
 
 def artistpage(request, artistid):
+    if not request.session.get('logged', False):
+        logged = False
+        userName = ''
+    else:
+        logged = True
+        userName = User.objects.get(id=request.session['userId']).userName
     if 'p' in request.GET:
         pg = int(request.GET['p'])
     else:
         pg = 0
     name, wlist, num, isbkg, isprem = Getartistinfo(artistid, update=1, pg=pg)
-    pages=pagelist((num+14)//15,pg+1)
+    pages = pagelist((num+14)//15, pg+1)
     ctx = {
         'artistid': artistid,
         'artistname': name,
@@ -53,6 +61,8 @@ def artistpage(request, artistid):
         'isbkg': isbkg,
         'isprem': isprem,
         'pages': pages,
+        'logged': logged,
+        'userName': userName,
     }
     return render(
         request,

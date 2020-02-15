@@ -21,23 +21,78 @@
         }
     </style>
 {% endblock %}
+
+{% block nav %}
+    {% if logged %}
+        {% if marked %}
+            <button type="button" class="btn btn-danger" id="mark" disabled><span style="font-size:17px">&#10003;&ensp;</span>Markd</button>
+        {% else %}
+            <button type="button" class="btn btn-danger" id="mark" onclick="markWork()"><span style="font-size:17px">&hearts;&ensp;</span>Mark</button>
+        {% endif %}
+    {% else %}
+        <button type="button" class="btn btn-danger" onclick="javascript:$('#hint').modal()"><span style="font-size:17px">&hearts;&ensp;</span>Mark</button>
+    {% endif %}
+{% endblock nav %}
 {% block content %}
 <div class="container" >
     <div id="back">
         <div style="width: 100%;height: 1px;margin: 0 0;"></div>
         <div class="card bg-dark text-light" id="maincard">
-            <a href="{% url 'artwork' artworkid 5 %}" target="_blank"><img class="card-img-top" src="{% url 'artwork' artworkid 4 %}"></a>
+            {% for i in pageList %}
+            <a href="{% url 'artworks' artworkid 5 forloop.counter0 %}" target="_blank"><img class="card-img-top" src="{% url 'artworks' artworkid 4 forloop.counter0 %}"></a>
+            <div style="height:40px"></div>
+            {% endfor %}
             <div class="card-body">
                 <h1 class="card-title" style="margin-left: 20px">{{name}}</h1>
                 <p class="card-text" style="color:darkgray;margin-left: 20px;"></p>
                 <p class="card-text" style="color:darkgray;margin-left: 20px;">ID={{artworkid}}</p>
-                <p class="card-text" style="color:darkgray;margin-left: 20px;">by {{artist}} No.{{artistid}}</p>
-
+                <a href="{% url 'artistpage' artistid %}"><p class="card-text" style="color:darkgray;margin-left: 20px;">by {{artist}} No.{{artistid}}</p></a>
             </div>
         </div>
         <div style="width: 100%;height: 1px;margin:10% 0 0 0;"></div>
     </div>
 </div>
 {% endblock %}
+{% block modal %}
+
+{% if not logged %}
+	    <div class="modal fade" id="hint" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"              aria-hidden="true">
+  		    <div class="modal-dialog" role="document">
+    		    <div class="modal-content" style="background-color: rgba(0, 0, 0, 0.4);">
+      			    <div class="modal-header">
+        			    <h2 class="modal-title" style="color:whitesmoke;">Hint</h5>
+        			    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          				    <span aria-hidden="true" style="color:gray;">&times;</span>
+        			    </button>
+      			    </div>
+      			    <div class="modal-body">
+        		    	<span style="color:whitesmoke;">Please login first.</span>
+      			    </div>
+      			    <div class="modal-footer">
+        		    	<button type="button" class="btn btn-outline-success" data-dismiss="modal">yes</button>
+      			    </div>
+    		    </div>
+  		    </div>
+	    </div>
+{% endif %}
+{% endblock modal %}
 {% block script %}
+<script>
+    function markWork(){
+        $('#mark').html('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>&ensp;Mark');
+		$.ajax({
+            url:'/user/collections/add/',
+            type:'post',
+            data:{
+                picid: '{{artworkid}}',
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success:function(data){
+                setTimeout($('#mark').html('<span style="font-size:17px">&#10003;&ensp;</span>Marked'),1000);
+                $('#mark').attr('disabled','true');
+                $('#mark').removeAttr('onclick');
+            }
+        });
+    }
+</script>
 {% endblock %}

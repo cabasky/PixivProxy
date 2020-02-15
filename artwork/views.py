@@ -3,8 +3,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from utils.pixivc import *
 from .models import Artwork
 import json
+from users.models import User
 # Create your views here.
-formatset = ['jpg','png']
+formatset = ['jpg', 'png']
 
 
 def postid(request):
@@ -12,13 +13,32 @@ def postid(request):
 
 
 def ArtworkId(request, workid):
-    ArtistId, Artist, Name, Url, PageCount, ImgFormat = GetInfoByIdUnLogin(str(workid))
-    context = {'artworkid': workid, 'artist': Artist,
-               'artistid': ArtistId, 'name': Name}
+    if not request.session.get('logged', False):
+        logged = False
+        userName = ''
+        marked = False
+    else:
+        logged = True
+        mainUser = User.objects.get(id=request.session['userId'])
+        userName = mainUser.userName
+        marked = mainUser.ifmarked(workid)
+    ArtistId, Artist, Name, Url, PageCount, ImgFormat = GetInfoByIdUnLogin(
+        str(workid))
+    pageList = range(int(PageCount))
+    ctx = {
+        'artworkid': workid,
+        'artist': Artist,
+        'artistid': ArtistId,
+        'name': Name,
+        'logged': logged,
+        'userName': userName,
+        'marked': marked,
+        'pageList': pageList,
+    }
     return render(
         request,
         template_name='artwork/artworkpage.html',
-        context=context
+        context=ctx
     )
 
 
@@ -57,6 +77,18 @@ def img(request, workid, mode):
         url = Getpicurl(raw[3], workid, mode, 0, formatset[raw[5]])
     else:
         url = Getpicurl(idList[0].url, workid, mode, 0,
+                        formatset[idList[0].imgformat])
+    img, allowtype = GetpicturebyUrl(url)
+    return HttpResponse(img, content_type='image/jpg;image/png')
+
+
+def imgs(request, workid, mode, page):
+    idList = Artwork.objects.filter(picid=int(workid))
+    if(not idList):
+        raw = GetInfoByIdUnLogin(workid)
+        url = Getpicurl(raw[3], workid, mode, page, formatset[raw[5]])
+    else:
+        url = Getpicurl(idList[0].url, workid, mode, page,
                         formatset[idList[0].imgformat])
     img, allowtype = GetpicturebyUrl(url)
     return HttpResponse(img, content_type='image/jpg;image/png')

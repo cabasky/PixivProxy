@@ -3,11 +3,18 @@ from utils.ranking import loadranklist, rankpiece
 from ranklist.models import RankList, RankWork, Edge
 from django.utils import timezone
 import datetime
+from users.models import User
 # Create your views here.
 userimgheader = 'https://i.pximg.net/user-profile/img/'
 
 
 def ranklist(request):
+    if not request.session.get('logged', False):
+        logged = False
+        userName = ''
+    else:
+        logged = True
+        userName = User.objects.get(id=request.session['userId']).userName
     if timezone.now().hour < 12:
         deltadays = 2
     else:
@@ -44,7 +51,13 @@ def ranklist(request):
         rklstobj = rklstobj[0]
         rklraw = rklstobj.edge_set.all().order_by('ranking')
         for i in rklraw:
-            rkl.append(rankpiece(id=i.rankw.artworkid, name=i.rankw.name, artist=i.rankw.artist, artistid=i.rankw.artistid))
-    context = {'rankdate': rankdate,
-               'mode': rklstobj.get_mode_display(), 'rkl': rkl}
-    return render(request, template_name='ranklist/ranklist.html', context=context)
+            rkl.append(rankpiece(id=i.rankw.artworkid, name=i.rankw.name,
+                                 artist=i.rankw.artist, artistid=i.rankw.artistid))
+    ctx = {
+        'rankdate': rankdate,
+        'mode': rklstobj.get_mode_display(),
+        'rkl': rkl,
+        'logged': logged,
+        'userName': userName,
+    }
+    return render(request, template_name='ranklist/ranklist.html', context=ctx)

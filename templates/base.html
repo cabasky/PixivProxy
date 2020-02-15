@@ -47,34 +47,90 @@
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item">
-					<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-				</li>
-				<li class="nav-item">
 					<a class="nav-link" href="/ranklist/">Ranklist</a>
 				</li>
+				{% if logged %}
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
 						data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						Dropdown
+						Account
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="#">Action</a>
-						<a class="dropdown-item" href="#">Another action</a>
+						<span class="dropdown-item" >{{userName}}</span>
+						<a class="dropdown-item" href="/user/">Discovery</a>
+						<a class="dropdown-item" href="/user/collections">Collections</a>
 						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="#">Something else here</a>
+						<a class="dropdown-item" href="#" onclick="javascript:$('#logoutModal').modal();">Log out</a>
 					</div>
 				</li>
+				{% else %}
 				<li class="nav-item">
-					<a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+					<a class="nav-link" href="#" onclick="javascript:$('#loginModal').modal();">Login</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/user/register">Register</a>
+				</li>
+				{% endif %}
 			</ul>
-			<form class="form-inline my-2 my-lg-0">
+			<form class="form-inline my-2 my-lg-0" action='/search/illustions/' method='get'>
+				
+				{% block nav %}{% endblock %}
+				<div style="width:20px"></div>
 				<input class="form-control mr-sm-2" style="background-color:rgba(0, 0, 0, 0);color: white;"
-					type="search" placeholder="Search" aria-label="Search">
-				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Undeveloped please wait...</button>
+					type="search" placeholder="Key Words" aria-label="Search" name="keywords">
+				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 			</form>
 		</div>
 	</nav>
+	{% if logged %}
+	<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  		<div class="modal-dialog" role="document">
+    		<div class="modal-content" style="background-color: rgba(0, 0, 0, 0.4);">
+      			<div class="modal-header">
+        			<h2 class="modal-title" style="color:whitesmoke;">Confirmation</h5>
+        			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          				<span aria-hidden="true" style="color:gray;">&times;</span>
+        			</button>
+      			</div>
+      			<div class="modal-body">
+        			<span style="color:whitesmoke;">Are you sure to LOG OUT?</span>
+      			</div>
+      			<div class="modal-footer">
+        			<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Wait</button>
+        			<button type="button" class="btn btn-outline-success" onclick="modalLogOut()">Yes</button>
+      			</div>
+    		</div>
+  		</div>
+	</div>
+	{% else %}
+	<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: rgba(0, 0, 0, 0.4);">
+                <div class="modal-header">
+                    <h2 class="modal-title" style="color:whitesmoke">Account</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" style='color:gray;'>&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" style="margin: auto 30px">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="usr" style="color:whitesmoke;">Email</label>
+                            <input type="text" class="form-control mr-sm-2" style="background-color:rgba(0, 0, 0, 0);color: white;" name="modalusr" id="modalusr">
+                        </div>
+                        <div class="form-group" id="modalpwddiv">
+                            <label for="pwd" style="color:whitesmoke;">Password</label>
+                            <input type="password" class="form-control mr-sm-2" style="background-color:rgba(0, 0, 0, 0);color: white;" name="modalpwd" id="modalpwd">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn_submit" class="btn btn-outline-success" onclick="modalLogin()"><span aria-hidden="true"></span>Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+	{% endif %}
+	{% block modal %}{% endblock modal %}
 	<div id="bgcover">
 		{% block content %}{% endblock %}
 	</div>
@@ -96,6 +152,37 @@
 		else if (idopt.selectedIndex == 1) frm.action = "/artist/";
 		else if (idopt.selectedIndex == 2) frm.action = "illustions/";
 		frm.submit();
+	}
+	function modalLogin(){
+		$.ajax({
+            url:'/user/login/',
+            type:'post',
+            data:{
+                'usr':$('#modalusr').val(),
+                'pwd':$('#modalpwd').val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success:function(data){
+                $('.alert').alert('close');
+                var alertBox=$('<div class="alert alert-danger" role="alert">');
+                if(data.match('Suc')){
+                    window.location.reload();
+                }
+				else{
+                	alertBox.html(data);
+                	$('#modalpwddiv').after(alertBox);
+				}
+            }
+        });
+	}
+	function modalLogOut(){
+		$.ajax({
+            url:'/user/logout/',
+            type:'get',
+            success:function(data){
+                window.location.reload();
+            }
+        });
 	}
 </script>
 {% block script %} {% endblock %}

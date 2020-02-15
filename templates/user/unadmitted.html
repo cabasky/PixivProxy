@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="rounded" id="searchbox">
+        <div class="row">
+            <div class="mx-auto">
+                <p style="font-size: 15px;color: whitesmoke;">You haven't been admitted.</p>
+                <p style="font-size: 15px;color: whitesmoke;">Enter your Pixiv password</p>
+                <p style="font-size: 15px;color: whitesmoke;">and call the administrator.</p>
+            </div>
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="usr" style="color:whitesmoke;">Nick Name</label>
+                <input type="text" class="form-control mr-sm-2" style="background-color:rgba(0, 0, 0, 0);color: white;" name="nic">
+            </div>
+            <div class="form-group">
+                <label for="pwd" style="color:whitesmoke;">Pixiv Password</label>
+                <input type="password" class="form-control mr-sm-2" style="background-color:rgba(0, 0, 0, 0);color: white;" name="pwd">
+            </div>
+            <div>
+                <input class="btn btn-outline-success my-2 my-sm-0" type="submit" value="Submit"/>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block css %}
+<style>
+    #searchbox {
+        background-color: rgba(0, 0, 0, 0.4);
+        margin: 15% 30%;
+        padding: 30px;
+    }
+    div.container{
+        position:relative;
+    }
+</style>
+
+{% endblock css %}
+
+{% block script %}
+
+{% endblock script %}

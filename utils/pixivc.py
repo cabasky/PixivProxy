@@ -3,6 +3,7 @@ import requests
 import re
 from artwork.models import Artwork
 from artist.models import Artist
+from users.models import bookMarkArtwork, User
 import json
 # from artwork.models import Artwork
 
@@ -85,7 +86,7 @@ class PixivClient:
         self.close()
 
 
-def GetInfoByIdUnLogin(id, InsArtist=None):
+def GetInfoByIdUnLogin(id, InsArtist=None, returnIns=False):
     idList = Artwork.objects.filter(picid=int(id))
     if(not idList):
         mainjson = requests.get('https://www.pixiv.net/ajax/illust/'+id).text
@@ -118,7 +119,8 @@ def GetInfoByIdUnLogin(id, InsArtist=None):
         InsUrl = NewArtwork.url
         InsPageCount = NewArtwork.pageCount
         Insformat = NewArtwork.imgformat
-
+    if(returnIns):
+        return NewArtwork
     return (str(InsArtist.artistid), InsArtist.name, InsName, InsUrl, InsPageCount, Insformat)
 
 
@@ -235,5 +237,92 @@ def GetSearchList(keywords, page):
             break
         if mainJson[i+startTag]['isAdContainer']:
             continue
-        workList.append((mainJson[i+startTag]['id'],mainJson[i+startTag]['title']))
-    return workList,totalNum
+        workList.append((mainJson[i+startTag]['id'],
+                         mainJson[i+startTag]['title']))
+    return workList, totalNum
+
+
+def getUserDiscovery(userClass):
+    mainUrl = 'https://www.pixiv.net/rpc/recommender.php?type=illust&sample_illusts=auto&num_recommendations=15&page=discovery&mode=all'
+    cookies = Cookies(userClass.getCookies()).cookiesdict
+    headers = Headers('accept: */*|accept-encoding: gzip, deflate, br|accept-language: zh-CN,zh;q=0.9|referer: https://www.pixiv.net/discovery|sec-fetch-dest: empty|sec-fetch-mode: cors|sec-fetch-site: same-origin|user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.100 Safari/537.36|x-user-id: '+str(userClass.userId)).headersdict
+    mainJson = json.loads(requests.get(
+        url=mainUrl, cookies=cookies, headers=headers).text)
+    return mainJson['recommendations']
+
+
+def getUserCollections(userClass, offset):
+    totalNum = userClass.workMark
+    st = totalNum-offset
+    workList = []
+    for i in range(15):
+
+        if st == 0:
+            break
+        workList.append(str(userClass.bookmarkartwork_set.all().get(
+            order=st).target.picid))
+        st -= 1
+    return workList, totalNum
+
+
+def updateUserCollections(userClass):
+    cookies = Cookies(userClass.getCookies()).cookiesdict
+    headers = Headers('accept: application/json|accept-encoding: gzip, deflate, br|accept-language: zh-CN,zh;q=0.9|referer: https://www.pixiv.net/users/%d/bookmarks/artworks|sec-fetch-dest: empty|sec-fetch-mode: cors|sec-fetch-site: same-origin|user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.100 Safari/537.36|x-user-id: %d' % (userClass.userId, userClass.userId)).headersdict
+    offset = 0
+    num = 0
+    workList = []
+    userClass.bookmarkartwork_set.all().delete()
+    while True:
+        mainUrl = 'https://www.pixiv.net/ajax/user/%d/illusts/bookmarks?tag=&offset=%d&limit=100&rest=show' % (
+            userClass.userId, offset)
+        mainJson = json.loads(requests.get(
+            url=mainUrl, cookies=cookies, headers=headers).text)['body']['works']
+        if not mainJson:
+            break
+        for i in mainJson:
+            workList.insert(0, i['illustId'])
+            num += 1
+        offset += 100
+    userClass.workMark = num
+    userClass.save()
+    num = 0
+    for i in workList:
+        work = GetInfoByIdUnLogin(i, returnIns=True)
+        num += 1
+        link = bookMarkArtwork(marker=userClass, target=work, order=num)
+        link.save()
+
+
+def getCsrfToken(userClass, picid):
+    mainUrl = 'https://www.pixiv.net/artworks/'+picid
+    cookies = Cookies(userClass.getCookies()).cookiesdict
+    headers = Headers('accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9|accept-encoding: gzip, deflate, br|accept-language: zh-CN,zh;q=0.9|cache-control: max-age=0|referer: https://www.pixiv.net/|sec-fetch-dest: document|sec-fetch-mode: navigate|sec-fetch-site: same-origin|sec-fetch-user: ?1|upgrade-insecure-requests: 1|user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.106 Safari/537.36').headersdict
+    mode = 'content=\'\{\"token\":\"(.*?)\"'
+    text = requests.get(url=mainUrl, cookies=cookies, headers=headers).text
+    mode = re.compile(mode)
+    return mode.findall(text)[0]
+
+
+def bookMarkArtworkInDB(userClass, picid):
+    work = Artwork.objects.get(picid=picid)
+    totalNum = userClass.workMark
+    totalNum += 1
+    link = bookMarkArtwork(marker=userClass, target=work, order=totalNum)
+    link.save()
+    userClass.workMark = totalNum
+    userClass.save()
+
+
+def bookMarkOnArtwork(userClass, picid):
+    csrfToken = getCsrfToken(userClass, picid)
+    mainUrl = 'https://www.pixiv.net/ajax/illusts/bookmarks/add'
+    cookies = Cookies(userClass.getCookies()).cookiesdict
+    headers = Headers('accept: application/json|accept-encoding: gzip, deflate, br|accept-language: zh-CN,zh;q=0.9|content-length: 60|content-type: application/json; charset=utf-8|origin: https://www.pixiv.net|referer: https://www.pixiv.net/artworks/%s|sec-fetch-dest: empty|sec-fetch-mode: cors|sec-fetch-site: same-origin|user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.106 Safari/537.36|x-csrf-token: %s' % (picid, csrfToken)).headersdict
+    payload = json.dumps(
+        {'illust_id': picid, 'restrict': 0, 'comment': "", 'tags': []})
+    mainJson = json.loads(requests.post(
+        mainUrl, payload, cookies=cookies, headers=headers).content)
+    if mainJson['body']['last_bookmark_id']:
+        bookMarkArtworkInDB(userClass, picid)
+        return True
+    return False

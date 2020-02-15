@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from artist.models import Artist
 from artwork.models import Artwork
 from ranklist.models import RankList,RankWork,Edge 
+from utils.pixivc import bookMarkOnArtwork
+from users.models import User 
 # Create your views here.
 
 def delall(request):
@@ -14,11 +16,4 @@ def delall(request):
     return HttpResponse('del OK!')
 
 def testtemp(request):
-    ctx={
-        'pages':(1,0,1,[1,2])
-    }
-    return render(
-        request,
-        template_name='tpage.html',
-        context=ctx,
-    )
+    return HttpResponse(bookMarkOnArtwork(User.objects.get(id=1),'79286371'),content_type='application/json')

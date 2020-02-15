@@ -1,0 +1,38 @@
+Request URL: https://www.pixiv.net/ajax/illusts/bookmarks/add
+Request Method: POST
+Status Code: 200 
+Remote Address: 127.0.0.1:1087
+Referrer Policy: no-referrer-when-downgrade
+cache-control: no-store, no-cache, must-revalidate
+content-encoding: gzip
+content-length: 108
+content-type: application/json; charset=utf-8
+date: Sat, 15 Feb 2020 06:57:40 GMT
+expires: Thu, 19 Nov 1981 08:52:00 GMT
+pragma: no-cache
+server: nginx
+set-cookie: PHPSESSID=22318221_aibzTseEZe4RDsD6U7G4TCcmUAcN2prT; expires=Mon, 16-Mar-2020 06:57:40 GMT; Max-Age=2592000; path=/; domain=.pixiv.net; secure; HttpOnly
+set-cookie: a_type=0; expires=Mon, 14-Feb-2022 06:57:40 GMT; Max-Age=63072000; path=/; domain=.pixiv.net; secure
+set-cookie: b_type=1; expires=Mon, 14-Feb-2022 06:57:40 GMT; Max-Age=63072000; path=/; domain=.pixiv.net; secure
+status: 200
+strict-transport-security: max-age=31536000
+vary: X-UserId,Accept-Encoding
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-host-time: 145
+x-userid: 22318221
+x-xss-protection: 1; mode=block
+:authority: www.pixiv.net
+:method: POST
+:path: /ajax/illusts/bookmarks/add
+:scheme: https
+
+
+"accept: application/json|accept-encoding: gzip, deflate, br|accept-language: zh-CN,zh;q=0.9|content-type: application/json; charset=utf-8|origin: https://www.pixiv.net|referer: https://www.pixiv.net/artworks/%s|sec-fetch-dest: empty|sec-fetch-mode: cors|sec-fetch-site: same-origin|user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.106 Safari/537.36|x-csrf-token: f89d5034ad19393e61488233a68c08af"
+
+
+{illust_id: "79471444", restrict: 0, comment: "", tags: []}
+illust_id: "79471444"
+restrict: 0
+comment: ""
+tags: []

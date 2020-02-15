@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="rounded" id="searchbox">
+        <div class="row">
+            <div class="mx-auto">
+                <p style="font-size: 60px;color: whitesmoke;">Login</p>
+            </div>
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="usr" style="color:whitesmoke;">Email</label>
+                <input type="text" class="form-control mr-sm-2" style="background-color:rgba(0, 0, 0, 0);color: white;" name="usr" id="usr">
+            </div>
+            <div class="form-group" id="pwddiv">
+                <label for="pwd" style="color:whitesmoke;">Password</label>
+                <input type="password" class="form-control mr-sm-2" style="background-color:rgba(0, 0, 0, 0);color: white;" name="pwd" id="pwd">
+            </div>
+            <div>
+                <button class="btn btn-outline-success my-2 my-sm-0" type="button" style=""
+                        onclick="login()">Login</button>
+                <span style="color:gray;">&nbsp;or&nbsp;</span>
+                <a href='/user/register' style="color: whitesmoke">register</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block css %}
+<style>
+    #searchbox {
+        background-color: rgba(0, 0, 0, 0.4);
+        margin: 15% 30%;
+        padding: 30px;
+    }
+    div.container{
+        position:relative;
+    }
+</style>
+
+{% endblock css %}
+
+{% block script %}
+<script>
+    function login(){
+        $.ajax({
+            url:'',
+            type:'post',
+            data:{
+                'usr':$('#usr').val(),
+                'pwd':$('#pwd').val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success:function(data){
+                $('.alert').alert('close');
+                var alertBox=$('<div class="alert alert-danger" role="alert">');
+                if(data.match('Suc')){
+                    window.location.reload();
+                }
+                else{
+                    alertBox.html(data);
+                    $('#pwddiv').after(alertBox);
+                }
+            }
+        })
+    }
+</script>
+{% endblock script %}

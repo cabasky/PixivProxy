@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="rounded" id="searchbox">
+        <div class="row">
+            <div class="mx-auto">
+                <p style="font-size: 60px;color: whitesmoke;">Register</p>
+            </div>
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="usr" style="color:whitesmoke;">Email</label>
+                <input type="text" class="form-control mr-sm-2" style="background-color:rgba(0, 0, 0, 0);color: white;" name="usr">
+            </div>
+            <div class="form-group">
+                <label for="pwd" style="color:whitesmoke;">Password</label>
+                <input type="password" class="form-control mr-sm-2" style="background-color:rgba(0, 0, 0, 0);color: white;" name="pwd">
+            </div>
+            <div class="form-group">
+                <label for="pwd" style="color:whitesmoke;">Confirm Password</label>
+                <input type="password" class="form-control mr-sm-2" style="background-color:rgba(0, 0, 0, 0);color: white;" name="cpwd">
+            </div>
+            <div>
+                <input class="btn btn-outline-success my-2 my-sm-0" type="submit" value="Submit"/>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block css %}
+<style>
+    #searchbox {
+        background-color: rgba(0, 0, 0, 0.4);
+        margin: 15% 30%;
+        padding: 30px;
+    }
+    div.container{
+        position:relative;
+    }
+</style>
+
+{% endblock css %}
+
+{% block script %}
+
+{% endblock script %}

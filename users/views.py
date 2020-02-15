@@ -22,7 +22,7 @@ def register(request):
                 pwd = salt+pwd
                 token = hashlib.md5(pwd.encode()).hexdigest()
                 userList = User(userName='', userAccount=usr, salt=salt,
-                                token=token, userCookies=randstr(16), admission=False, userId=0, workmark=0, updateCollections=False, pixivPassword='')
+                                token=token, userCookies=randstr(16), admission=False, userId=0, workMark=0, updateCollections=False, pixivPassword='')
                 userList.save()
                 return HttpResponse('Succeed!')
             else:

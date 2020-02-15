@@ -61,7 +61,8 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR+"/templates",
-            '/usr/local/lib/python3.7/site-packages/django/contrib/admin/templates',
+            #'/usr/local/lib/python3.7/site-packages/django/contrib/admin/templates',
+            '/home/ubuntu/.local/lib/python3.6/site-packages/django/contrib/admin/templates',
         ],
         'APP_DIRS': False,
         'OPTIONS': {
@@ -125,10 +126,10 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    "static",
-    #"/home/ubuntu/webfile/PixivProxy/static",
+    #"static",
+    "/home/ubuntu/webfile/PixivProxy/static",
 ]
 
 STATIC_ROOT = "/home/ubuntu/webfile/static/"
 
-COOKIES_DIRS = '/Users/xie_q/development/userInfo/'
+COOKIES_DIRS = '/home/ubuntu/webfile/userInfo/'

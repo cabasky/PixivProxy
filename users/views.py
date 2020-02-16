@@ -53,9 +53,6 @@ def login(request):
             return HttpResponse('Wrong password!')
         request.session['logged'] = True
         request.session['userId'] = userList[0].id
-        print(request.session['logged'])
-        print(request.session['userId'])
-        print('hhhhh')
         return HttpResponse('Successfully logged in!')
     return render(request, template_name='user/login.html')
 

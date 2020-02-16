@@ -6,16 +6,12 @@ from users.models import User
 
 
 def searchpage(request):
-    print(request.session.get('logged', False))
     if not request.session.get('logged', False):
-        print(1)
         logged = False
         userName = ''
     else:
-        print(2)
         logged = True
         userName = User.objects.get(id=request.session['userId']).userName
-    print(logged)
     ctx={
         'logged': logged,
         'userName': userName,

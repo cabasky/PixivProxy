@@ -4,6 +4,7 @@ from artwork.models import Artwork
 from PixivProxy.settings import COOKIES_DIRS
 import re
 from base64 import b64decode
+from utils.pixivc import GetInfoByIdUnLogin
 # Create your models here.
 
 
@@ -37,7 +38,7 @@ class User(models.Model):
         self.save()
 
     def ifmarked(self, picid):
-        insId=Artwork.objects.get(picid=int(picid)).id
+        insId=GetInfoByIdUnLogin(picid,returnIns=True).id
         picList=self.bookmarkartwork_set.filter(target_id=insId)
         if not picList:
             return False
